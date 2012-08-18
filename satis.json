@@ -1,0 +1,8 @@
+{
+    "name": "Rithis Studio",
+    "homepage": "http://composer.rithis.com",
+    "repositories": [
+        { "type": "vcs", "url": "https://github.com/rithis/skveez" }
+    ],
+    "require-all": true
+}

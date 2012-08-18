@@ -1,0 +1,13 @@
+{
+    "name": "rithis/composer.rithis.com",
+    "require": {
+        "composer/satis": "dev-master"
+    },
+    "minimum-stability": "dev",
+    "authors": [
+        {
+            "name": "Vyacheslav Slinko",
+            "email": "vyacheslav.slinko@gmail.com"
+        }
+    ]
+}

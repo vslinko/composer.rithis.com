@@ -1,4 +1,4 @@
 all:
 	mkdir -p web
 	./vendor/bin/satis build satis.json web
-	./upload
+	s3sync -pr web/ composer.rithis.com:

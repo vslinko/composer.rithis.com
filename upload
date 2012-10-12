@@ -1,0 +1,63 @@
+#!/usr/bin/env php
+<?php
+
+function api_request($url, array $headers = array(), $file = null) {
+    $handle = fopen('php://memory', 'w+');
+
+    $ch = curl_init($url);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+    curl_setopt($ch, CURLOPT_WRITEHEADER, $handle);
+
+    if ($file) {
+        curl_setopt($ch, CURLOPT_PUT, true);
+        curl_setopt($ch, CURLOPT_INFILE, fopen($file, 'r'));
+        curl_setopt($ch, CURLOPT_INFILESIZE, filesize($file));
+    }
+
+    $response = curl_exec($ch);
+
+    $headers = array();
+    rewind($handle);
+
+    $statusCode = (int) explode(' ', fgets($handle))[1];
+
+    while ($header = fgets($handle)) {
+        $pos = strpos($header, ':');
+        $name = substr($header, 0, $pos);
+        $value = substr($header, $pos+1);
+
+        $headers[$name] = trim($value);
+    }
+
+    return array($statusCode, $headers, $response);
+}
+
+function make_error($text, $code = 1) {
+    echo $text, "\n";
+    exit($code);
+}
+
+if (!is_readable(__DIR__ . '/auth.json')) {
+    make_error("auth.json isn't readable", 1);
+}
+
+$auth = (array) json_decode(file_get_contents(__DIR__ . '/auth.json'));
+
+list($statusCode, $headers, ) = api_request("https://auth.selcdn.ru/", array(
+    'X-Auth-User: ' . $auth['user'],
+    'X-Auth-Key: ' . $auth['key'],
+));
+
+if ($statusCode != 204) {
+    make_error("Unable to auth", 2);
+}
+
+$storageUrl = $headers['x-storage-url'];
+$authToken = $headers['x-auth-token'];
+
+foreach (array('index.html', 'packages.json') as $file) {
+    api_request($storageUrl . '/composer/' . $file, array(
+        'X-Auth-Token :' . $authToken,
+    ), __DIR__ . '/web/' . $file);
+}

@@ -3,7 +3,8 @@
     "homepage": "http://composer.rithis.com",
     "repositories": [
         { "type": "vcs", "url": "https://github.com/rithis/skveez" },
-        { "type": "vcs", "url": "https://github.com/symfio/symfio" }
+        { "type": "vcs", "url": "https://github.com/symfio/symfio" },
+        { "type": "vcs", "url": "https://github.com/rithis/bec-russia" }
     ],
     "require-all": true
 }
